@@ -27,10 +27,138 @@ class BasicContactViewController: UIViewController {
         
     }
     
+    
+    var chatListAccount = ""
+    var chatListName = ""
+    var childByAutoid_Has_Been_Set = false
+    var autoConfirm = false
+    
+    
     @IBAction func BasicContact_StartChatting_Button_Tapped(_ sender: UIButton) {
         
+        FIRDatabase.database().reference(withPath: "Message").childByAutoId().child(self.uid).setValue(self.uidToDisplay)
         
+        FIRDatabase.database().reference(withPath: "ID/\(self.uid)/Profile/ChatList").childByAutoId().setValue(self.uidToDisplay)
+        
+        FIRDatabase.database().reference(withPath: "ID/\(self.uidToDisplay)/Profile/ChatList").childByAutoId().setValue(self.uid)
+        
+        
+        /*
+ FIRDatabase.database().reference().child("Message").observe(.value, with: { snapshott in
+            
+            if let snapshotts = snapshott.value as? [String:AnyObject] {
+                
+                for childd in snapshotts{
+                    
+                    print("child.value is \(childd.value)")
+
+                    
+                    if childd.key == self.uid{
+                        
+                        print("child.value is \(childd.value)")
+                        
+                    }
+                }
+            }
+        })
+        
+
+        
+        FIRDatabase.database().reference().child("ID/\(self.uid)/Profile/ChatList").observe(.value, with: { snapshot in
+            if let snapshots = snapshot.children.allObjects as? [FIRDataSnapshot] {
+                
+                for child in snapshots {
+                    
+                    // 亂數
+                    self.chatListAccount = child.key
+                    print("ChatListAccount is \(self.chatListAccount)")
+                    
+                    
+                    // 好友uid
+                    self.chatListName = child.value as! String
+                    print("chatListName is \(self.chatListName)")
+                    
+                    
+                    
+                    //如果chatlistAccount != uidToDisplay
+                    //if self.chatListName != self.uidToDisplay{
+                        
+                        
+                        //if self.childByAutoid_Has_Been_Set == false {
+                            
+                            //self.childByAutoid_Has_Been_Set = true
+                            
+                            
+                            //  Message/childByAutoID/uid/uidToDisplay
+                            FIRDatabase.database().reference(withPath: "Message").childByAutoId().child(self.uid).setValue(self.uidToDisplay)
+                            
+                            
+                            FIRDatabase.database().reference().child("Message").observe(.value, with: { snapshott in
+                                
+                                if let snapshotts = snapshott.value as? [String:AnyObject] {
+                                    
+                                    for childd in snapshotts{
+                                        
+                                        
+                                        if childd.key == self.uid{
+                                            
+                                            print("child.value is \(childd.value)")
+
+                                        }
+                                        
+                                        
+                                        //儲存在Manager裡面，亂碼聊天室
+                                        Manager.autoChatRoomName = childd.key
+                                        print("manager autochatroomname is \(Manager.autoChatRoomName)")
+                                        
+                                        
+                                        
+                                        //設在uid裏頭ChatList
+                                        FIRDatabase.database().reference(withPath: "ID/\(self.uid)/Profile/ChatList/\(self.uidToDisplay)").setValue(childd.key)
+                                        
+                                        //設在uidToDisplay裏頭ChatList
+                                        FIRDatabase.database().reference(withPath: "ID/\(self.uidToDisplay)/Profile/ChatList/\(self.uid)").setValue(childd.key)
+                                        
+                                        
+                                    }
+                                    
+                                }
+                            })
+                            
+
+                        //}
+                        
+                        
+                        
+                        
+                        
+                    //}
+                    
+                    /*else if self.chatListAccount == self.uidToDisplay{
+                        
+                        FIRDatabase.database().reference(withPath: "ID/\(self.uid)/Profile/ChatList/\(self.uidToDisplay)").observe(.value, with: { (snapshot) in
+                            if let chatRoom = snapshot.value{
+                                Manager.autoChatRoomName = chatRoom as! String
+                                print("chatRoom is \(chatRoom)")
+                                
+                            }
+                        })
+                        
+                    }*/
+                    
+                    
+                    
+                    
+
+                    
+                }
+            }
+            
+        })
+        
+    */
     }
+    
     var uid = ""
     var uidToDisplay = ""
     
@@ -57,15 +185,22 @@ class BasicContactViewController: UIViewController {
         
         self.view.backgroundColor = UIColor.black.withAlphaComponent(0.8)
         
+        //記得名字在Manager
+        FIRDatabase.database().reference(withPath: "ID/\(self.uidToDisplay)/Profile/Real-Name").observe(.value, with: { (snapshot) in
+            if let Name = snapshot.value{
+                Manager.chatRoomRealName = Name as! String
+                print("name is \(Name)")
+            }
+        })
+        
+        
+        
         //Retrieve data from Firebase database
         var ref = FIRDatabase.database().reference(withPath: "ID/\(self.uidToDisplay)/Profile/Real-Name")
         ref.observe(.value, with: { snapshot in (self.BasicContact_Name.text = snapshot.value as! String)
             })
         
-        
-        
-        
-        
+                
         //Retrieve data from Firebase database
         ref = FIRDatabase.database().reference(withPath: "ID/\(self.uidToDisplay)/Profile/Job-Description")
         ref.observe(.value, with: { snapshot in (self.BasicContact_JobDescription.text = snapshot.value as! String)

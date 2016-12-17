@@ -9,12 +9,23 @@
 
 //manager.swift
 
-    import Foundation
+import Foundation
+import FirebaseDatabase
 
     struct Manager {
 
-    static var messageText = String()
-    static var UID_of_Friend = String()
+        static var messageText = String()
+        static var UID_of_Friend = String()
+        static var autoChatRoomName = String()
+        static var chatRoomRealName = String()
+        static var ref = FIRDatabaseReference()
+  
+
+    }
 
 
+    struct MessageFields {
+        static let name = "name"
+        static let text = "text"
+    
     }
